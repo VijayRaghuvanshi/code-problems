@@ -2,18 +2,28 @@ package com.java.book.list;
 
 import java.util.Objects;
 
-public class MySinglyList<T> {
+public class MySinglyList<T extends Comparable> {
     private Node<T> head;
 
     public MySinglyList() {
     }
 
-    public static <T> MySinglyList<T> createList(T[] elements) {
+    public static <T extends Comparable> MySinglyList<T> createList(T[] elements) {
         MySinglyList<T> mySinglyList = new MySinglyList<>();
         for (T ele : elements) {
             mySinglyList.add(ele);
         }
         return mySinglyList;
+    }
+
+    public String getNumOfList() {
+        Node<T> pointer = head;
+        String numStr = "";
+        while (pointer != null) {
+            numStr = numStr + pointer.value;
+            pointer = pointer.next;
+        }
+        return numStr;
     }
 
     public void interate() {
@@ -77,6 +87,50 @@ public class MySinglyList<T> {
             startSlow = startSlow + 1;
         }
         return Objects.nonNull(slowPointer) ? slowPointer.value : null;
+    }
+
+    public void partitionAroundValue(T t) {
+        if (head == null || head.next == null) {
+            System.out.println("data does not exist");
+            return;
+        }
+
+        Node<T> lTListHead = null;
+        Node<T> ltPointer = null;
+        Node<T> gteListHead = null;
+        Node<T> gtePointer = null;
+        Node<T> pointer = head;
+        while (pointer != null) {
+            if (pointer.value.compareTo(t) < 0) {
+                if (lTListHead == null) {
+                    lTListHead = new Node<>(pointer.value);
+                    lTListHead.next = null;
+                    ltPointer = lTListHead;
+                } else {
+                    ltPointer.next = new Node<>(pointer.value);
+                    ltPointer = ltPointer.next;
+                    ltPointer.next = null;
+                }
+            } else {
+                if (gteListHead == null) {
+                    gteListHead = new Node<>(pointer.value);
+                    gteListHead.next = null;
+                    gtePointer = gteListHead;
+                } else {
+                    gtePointer.next = new Node<>(pointer.value);
+                    gtePointer = gtePointer.next;
+                    gtePointer.next = null;
+                }
+            }
+            pointer = pointer.next;
+        }
+        if (lTListHead != null) {
+            head = lTListHead;
+            ltPointer.next = gteListHead;
+        } else {
+            head = gteListHead;
+        }
+
     }
 
     public void removeDuplicates() {
